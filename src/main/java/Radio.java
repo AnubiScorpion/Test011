@@ -1,21 +1,24 @@
+import lombok.Data;
+
+@Data
 public class Radio {
-    private final int stationsCount;
     private int currentStation;
     private int volume;
+    private final int stationsCount;
 
-    // Конструктор с заданным количеством станций
-    public Radio(int stationsCount) {
-        if (stationsCount <= 0) {
-            throw new IllegalArgumentException("Количество станций должно быть больше 0");
-        }
-        this.stationsCount = stationsCount;
+    public Radio() {
+        this.stationsCount = 10;
         this.currentStation = 0;
         this.volume = 0;
     }
 
-    // Конструктор по умолчанию: 10 станций
-    public Radio() {
-        this(10);
+    public Radio(int stationsCount) {
+        if (stationsCount <= 0) {
+            throw new IllegalArgumentException("Stations count must be positive");
+        }
+        this.stationsCount = stationsCount;
+        this.currentStation = 0;
+        this.volume = 0;
     }
 
     public void next() {
@@ -38,15 +41,6 @@ public class Radio {
         if (station >= 0 && station < stationsCount) {
             this.currentStation = station;
         }
-        // Если вне диапазона — ничего не делаем (можно вместо этого кидать исключение)
-    }
-
-    public int getCurrentStation() {
-        return currentStation;
-    }
-
-    public int getStationsCount() {
-        return stationsCount;
     }
 
     public void increaseVolume() {
@@ -59,16 +53,6 @@ public class Radio {
         if (volume > 0) {
             volume--;
         }
-    }
-
-    public void setVolume(int volume) {
-        if (volume >= 0 && volume <= 100) {
-            this.volume = volume;
-        }
-    }
-
-    public int getVolume() {
-        return volume;
     }
 }
 
