@@ -4,90 +4,73 @@ import static org.junit.jupiter.api.Assertions.*;
 class RadioTest {
 
     @Test
-    void next_normalCase() {
+    void defaultConstructorShouldSet10Stations() {
         Radio radio = new Radio();
-        radio.setCurrentStation(3);
-        radio.next();
-        assertEquals(4, radio.getCurrentStation());
+        assertEquals(10, radio.getStationsCount());
+        assertEquals(0, radio.getCurrentStation());
     }
 
     @Test
-    void next_wrapAroundFrom9To0() {
-        Radio radio = new Radio();
+    void constructorWithParameterShouldSetStationsCount() {
+        Radio radio = new Radio(30);
+        assertEquals(30, radio.getStationsCount());
+        assertEquals(0, radio.getCurrentStation());
+    }
+
+    @Test
+    void nextShouldWrapAround() {
+        Radio radio = new Radio(10);
         radio.setCurrentStation(9);
         radio.next();
         assertEquals(0, radio.getCurrentStation());
     }
 
     @Test
-    void prev_normalCase() {
-        Radio radio = new Radio();
-        radio.setCurrentStation(3);
-        radio.prev();
-        assertEquals(2, radio.getCurrentStation());
-    }
-
-    @Test
-    void prev_wrapAroundFrom0To9() {
-        Radio radio = new Radio();
+    void prevShouldWrapAround() {
+        Radio radio = new Radio(10);
         radio.setCurrentStation(0);
         radio.prev();
         assertEquals(9, radio.getCurrentStation());
     }
 
     @Test
-    void setCurrentStation_validValue() {
-        Radio radio = new Radio();
-        radio.setCurrentStation(5);
-        assertEquals(5, radio.getCurrentStation());
+    void setCurrentStationShouldValidateRange() {
+        Radio radio = new Radio(5);
+        radio.setCurrentStation(3);
+        assertEquals(3, radio.getCurrentStation());
+
+        radio.setCurrentStation(-1); // вне диапазона
+        assertEquals(3, radio.getCurrentStation()); // не изменилось
+
+        radio.setCurrentStation(5); // вне диапазона (максимум 4)
+        assertEquals(3, radio.getCurrentStation()); // не изменилось
     }
 
     @Test
-    void setCurrentStation_tooLow_ignored() {
+    void increaseVolumeShouldNotExceed100() {
         Radio radio = new Radio();
-        radio.setCurrentStation(-1);
-        assertEquals(0, radio.getCurrentStation()); // осталось 0 (начальное)
-    }
-
-    @Test
-    void setCurrentStation_tooHigh_ignored() {
-        Radio radio = new Radio();
-        radio.setCurrentStation(10);
-        assertEquals(0, radio.getCurrentStation()); // осталось 0
-    }
-
-    @Test
-    void increaseVolume_normalCase() {
-        Radio radio = new Radio();
-        radio.increaseVolume();
-        assertEquals(1, radio.getCurrentVolume());
-    }
-
-    @Test
-    void increaseVolume_atMax_noChange() {
-        Radio radio = new Radio();
-        // быстро доводим до максимума
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < 150; i++) {
             radio.increaseVolume();
         }
-        assertEquals(100, radio.getCurrentVolume());
-        radio.increaseVolume(); // попытка увеличить сверх максимума
-        assertEquals(100, radio.getCurrentVolume());
+        assertEquals(100, radio.getVolume());
     }
 
     @Test
-    void decreaseVolume_normalCase() {
+    void decreaseVolumeShouldNotGoBelow0() {
         Radio radio = new Radio();
-        radio.increaseVolume(); // ставим 1
-        radio.decreaseVolume();
-        assertEquals(0, radio.getCurrentVolume());
+        radio.setVolume(100); // если добавишь сеттер, или просто сделай цикл уменьшения
+        for (int i = 0; i < 150; i++) {
+            radio.decreaseVolume();
+        }
+        assertEquals(0, radio.getVolume());
     }
 
     @Test
-    void decreaseVolume_atMin_noChange() {
-        Radio radio = new Radio();
-        assertEquals(0, radio.getCurrentVolume());
-        radio.decreaseVolume(); // попытка уменьшить ниже минимума
-        assertEquals(0, radio.getCurrentVolume());
+    void singleStationShouldWrapImmediately() {
+        Radio radio = new Radio(1);
+        radio.next();
+        assertEquals(0, radio.getCurrentStation());
+        radio.prev();
+        assertEquals(0, radio.getCurrentStation());
     }
 }

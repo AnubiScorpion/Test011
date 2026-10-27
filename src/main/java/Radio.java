@@ -1,58 +1,58 @@
+import lombok.Data;
+
+@Data
 public class Radio {
     private int currentStation;
-    private int currentVolume;
+    private int volume;
+    private final int stationsCount;
 
     public Radio() {
+        this.stationsCount = 10;
         this.currentStation = 0;
-        this.currentVolume = 0;
+        this.volume = 0;
     }
 
-    // Переключение на следующую станцию (с циклом 9 -> 0)
+    public Radio(int stationsCount) {
+        if (stationsCount <= 0) {
+            throw new IllegalArgumentException("Stations count must be positive");
+        }
+        this.stationsCount = stationsCount;
+        this.currentStation = 0;
+        this.volume = 0;
+    }
+
     public void next() {
-        if (currentStation == 9) {
+        if (currentStation == stationsCount - 1) {
             currentStation = 0;
         } else {
             currentStation++;
         }
     }
 
-    // Переключение на предыдущую станцию (с циклом 0 -> 9)
     public void prev() {
         if (currentStation == 0) {
-            currentStation = 9;
+            currentStation = stationsCount - 1;
         } else {
             currentStation--;
         }
     }
 
-    // Установка станции напрямую с проверкой диапазона [0; 9]
     public void setCurrentStation(int station) {
-        if (station >= 0 && station <= 9) {
+        if (station >= 0 && station < stationsCount) {
             this.currentStation = station;
         }
-        // Если значение вне диапазона — ничего не делаем (как принято в таких задачах)
     }
 
-    public int getCurrentStation() {
-        return currentStation;
-    }
-
-    // Увеличение громкости на 1 (не выше 100)
     public void increaseVolume() {
-        if (currentVolume < 100) {
-            currentVolume++;
+        if (volume < 100) {
+            volume++;
         }
     }
 
-    // Уменьшение громкости на 1 (не ниже 0)
     public void decreaseVolume() {
-        if (currentVolume > 0) {
-            currentVolume--;
+        if (volume > 0) {
+            volume--;
         }
-    }
-
-    public int getCurrentVolume() {
-        return currentVolume;
     }
 }
 
